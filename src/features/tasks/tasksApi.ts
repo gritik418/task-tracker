@@ -12,9 +12,6 @@ const tasksApi = createApi({
   reducerPath: "taskApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_BASE_URL}/tasks`,
-    headers: {
-      "Content-Type": "application/json",
-    },
   }),
   tagTypes: ["Tasks"],
   endpoints: (build) => ({
@@ -47,7 +44,7 @@ const tasksApi = createApi({
           searchParams.set("sort", params.sort);
         }
 
-        return { url: "/", method: "GET", params: searchParams };
+        return { url: `?${searchParams.toString()}`, method: "GET" };
       },
       providesTags: ["Tasks"],
     }),
