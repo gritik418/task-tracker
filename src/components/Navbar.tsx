@@ -1,12 +1,11 @@
-import React from "react";
 import { CheckCircle2 } from "lucide-react";
 
 const Navbar = () => {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-lg">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-linear-to-r from-slate-900 via-slate-800 to-slate-900 shadow-lg">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-md">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 shadow-md">
             <CheckCircle2 className="text-white" size={22} />
           </div>
 
