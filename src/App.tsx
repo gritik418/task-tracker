@@ -22,8 +22,20 @@ const Home = () => {
   });
   const [tasks, setTasks] = useState<Task[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [status, setStatus] = useState<"Todo" | "In Progress" | "Done" | null>(
+    null,
+  );
+  const [priority, setPriority] = useState<"High" | "Medium" | "Low" | null>(
+    null,
+  );
+  const [sort, setSort] = useState<"newest" | "oldest" | null>(null);
 
-  const { data, isLoading } = useGetTasksQuery({ search: searchQuery });
+  const { data, isLoading } = useGetTasksQuery({
+    search: searchQuery,
+    status,
+    priority,
+    sort,
+  });
 
   useEffect(() => {
     if (!isLoading && data?.data) {
@@ -122,7 +134,16 @@ const Home = () => {
             </div>
           </div>
 
-          <Filters searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          <Filters
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            status={status}
+            setStatus={setStatus}
+            priority={priority}
+            setPriority={setPriority}
+            sort={sort}
+            setSort={setSort}
+          />
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 mt-8 gap-4">
             {tasks.map((task: Task) => {

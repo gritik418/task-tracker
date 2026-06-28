@@ -18,10 +18,10 @@ export interface GetTasksResponseDto {
 }
 
 export interface GetTasksRequestParams {
-  status?: "Todo" | "In Progress" | "Done";
-  priority?: "High" | "Medium" | "Low";
-  search?: string;
-  sort?: "newest" | "oldest";
+  status?: "Todo" | "In Progress" | "Done" | null;
+  priority?: "High" | "Medium" | "Low" | null;
+  search?: string | null;
+  sort?: "newest" | "oldest" | null;
 }
 
 export interface Task {
