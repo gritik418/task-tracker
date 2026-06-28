@@ -5,6 +5,7 @@ import {
   Clock,
   List,
   Plus,
+  FolderOpen,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import AddTaskModal from "./components/AddTaskModal";
@@ -13,6 +14,7 @@ import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import Filters from "./components/Filters";
 import Navbar from "./components/Navbar";
 import TaskCard from "./components/TaskCard";
+import Footer from "./components/Footer";
 import { useGetTasksQuery } from "./features/tasks/tasksApi";
 import type { Task } from "./types";
 
@@ -41,6 +43,15 @@ const Home = () => {
     null,
   );
   const [sort, setSort] = useState<"newest" | "oldest" | null>(null);
+
+  const isFiltered = !!searchQuery || status !== null || priority !== null;
+
+  const handleResetFilters = () => {
+    setSearchQuery("");
+    setStatus(null);
+    setPriority(null);
+    setSort(null);
+  };
 
   const [taskStats, setTaskStats] = useState<TaskStats>({
     completed: 0,
@@ -77,9 +88,8 @@ const Home = () => {
     <>
       <Navbar />
 
-      <main className="min-h-[calc(100vh-64px)] bg-slate-950 text-slate-100">
-        <div className="mx-auto max-w-7xl px-5 py-8">
-          {/* Header Section */}
+      <main className="min-h-[calc(100vh-64px)] bg-slate-950 text-slate-100 flex flex-col">
+        <div className="mx-auto max-w-7xl px-5 py-8 flex-1 w-full">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between border-b border-slate-800 pb-6 mb-8">
             <div>
               <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1 text-xs font-semibold text-blue-400 mb-2">
@@ -191,19 +201,54 @@ const Home = () => {
             setSort={setSort}
           />
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 mt-8 gap-4">
-            {tasks.map((task: Task) => {
-              return (
-                <TaskCard
-                  key={task._id}
-                  task={task}
-                  onEdit={(t) => setEditingTask(t)}
-                  onDelete={(t) => setDeletingTask(t)}
-                />
-              );
-            })}
-          </div>
+          {tasks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center text-center p-8 mt-8 rounded-2xl border border-dashed border-slate-800 bg-slate-900/10 backdrop-blur-xs py-16 animate-in fade-in duration-300">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-900 border border-slate-800 text-slate-400 mb-5 shadow-lg">
+                <FolderOpen className="h-8 w-8 text-blue-400" />
+              </div>
+              <h3 className="font-heading text-xl font-bold text-slate-200">
+                {isFiltered ? "No matching tasks" : "No tasks yet"}
+              </h3>
+              <p className="mt-2 text-sm text-slate-400 max-w-sm leading-relaxed">
+                {isFiltered
+                  ? "We couldn't find any tasks matching your filters. Try resetting your search or filters."
+                  : "Keep your workspace clean and organized. Create your first task to get started!"}
+              </p>
+              <div className="mt-6 flex items-center gap-3">
+                {isFiltered ? (
+                  <button
+                    onClick={handleResetFilters}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-800 px-5 py-2.5 text-sm font-semibold text-slate-300 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
+                  >
+                    Clear Filters
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsAddTaskOpen(true)}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/10 hover:from-blue-700 hover:to-indigo-700 transition-all cursor-pointer"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Create Task
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 mt-8 gap-4">
+              {tasks.map((task: Task) => {
+                return (
+                  <TaskCard
+                    key={task._id}
+                    task={task}
+                    onEdit={(t) => setEditingTask(t)}
+                    onDelete={(t) => setDeletingTask(t)}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
+        <Footer />
       </main>
 
       <AddTaskModal
