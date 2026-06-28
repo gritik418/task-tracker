@@ -1,20 +1,30 @@
-import { useEffect, useState } from "react";
 import {
   Calendar,
-  Plus,
+  CheckCircle2,
   ClipboardList,
   Clock,
-  CheckCircle2,
+  List,
+  Plus,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import AddTaskModal from "./components/AddTaskModal";
+import UpdateTaskModal from "./components/UpdateTaskModal";
 import Filters from "./components/Filters";
 import Navbar from "./components/Navbar";
-import type { Task } from "./types";
 import TaskCard from "./components/TaskCard";
-import AddTaskModal from "./components/AddTaskModal";
 import { useGetTasksQuery } from "./features/tasks/tasksApi";
+import type { Task } from "./types";
+
+type TaskStats = {
+  total: number;
+  inProgress: number;
+  completed: number;
+  todo: number;
+};
 
 const Home = () => {
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     month: "short",
@@ -30,6 +40,12 @@ const Home = () => {
   );
   const [sort, setSort] = useState<"newest" | "oldest" | null>(null);
 
+  const [taskStats, setTaskStats] = useState<TaskStats>({
+    completed: 0,
+    inProgress: 0,
+    total: 0,
+    todo: 0,
+  });
   const { data, isLoading } = useGetTasksQuery({
     search: searchQuery,
     status,
@@ -40,6 +56,18 @@ const Home = () => {
   useEffect(() => {
     if (!isLoading && data?.data) {
       setTasks(data.data);
+
+      const inProgressTasks = data.data.filter(
+        (task) => task.status === "In Progress",
+      );
+      const completedTasks = data.data.filter((task) => task.status === "Done");
+      const todoTasks = data.data.filter((task) => task.status === "Todo");
+      setTaskStats({
+        completed: completedTasks.length,
+        inProgress: inProgressTasks.length,
+        total: data.data.length,
+        todo: todoTasks.length,
+      });
     }
   }, [isLoading, data]);
 
@@ -81,7 +109,7 @@ const Home = () => {
           </div>
 
           {/* Stats Cards Section */}
-          <div className="grid gap-4 sm:grid-cols-3 mb-8">
+          <div className="grid gap-4 grid-cols-2 sm:grid-cols-4 mb-8">
             {/* Total Tasks Card */}
             <div className="group rounded-2xl border border-slate-800/85 bg-slate-900/30 p-5 shadow-md backdrop-blur-xs transition-all duration-300 hover:border-slate-700 hover:bg-slate-900/60">
               <div className="flex items-center justify-between">
@@ -90,15 +118,31 @@ const Home = () => {
                     Total Tasks
                   </p>
                   <h3 className="mt-2 font-heading text-2xl font-bold text-slate-200 group-hover:text-blue-400 transition-colors">
-                    12
+                    {taskStats.total}
                   </h3>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 transition-all duration-300 group-hover:bg-blue-600 group-hover:text-white">
-                  <ClipboardList className="h-6 w-6" />
+                  <List className="h-6 w-6" />
                 </div>
               </div>
             </div>
 
+            {/* Todo Card */}
+            <div className="group rounded-2xl border border-slate-800/85 bg-slate-900/30 p-5 shadow-md backdrop-blur-xs transition-all duration-300 hover:border-slate-700 hover:bg-slate-900/60">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Todo
+                  </p>
+                  <h3 className="mt-2 font-heading text-2xl font-bold text-slate-200 group-hover:text-gray-400 transition-colors">
+                    {taskStats.todo}
+                  </h3>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-500/10 text-gray-400 transition-all duration-300 group-hover:bg-gray-600 group-hover:text-white">
+                  <ClipboardList className="h-6 w-6" />
+                </div>
+              </div>
+            </div>
             {/* In Progress Card */}
             <div className="group rounded-2xl border border-slate-800/85 bg-slate-900/30 p-5 shadow-md backdrop-blur-xs transition-all duration-300 hover:border-slate-700 hover:bg-slate-900/60">
               <div className="flex items-center justify-between">
@@ -107,7 +151,7 @@ const Home = () => {
                     In Progress
                   </p>
                   <h3 className="mt-2 font-heading text-2xl font-bold text-slate-200 group-hover:text-amber-400 transition-colors">
-                    4
+                    {taskStats.inProgress}
                   </h3>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 transition-all duration-300 group-hover:bg-amber-600 group-hover:text-white">
@@ -124,7 +168,7 @@ const Home = () => {
                     Completed
                   </p>
                   <h3 className="mt-2 font-heading text-2xl font-bold text-slate-200 group-hover:text-emerald-400 transition-colors">
-                    8
+                    {taskStats.completed}
                   </h3>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 transition-all duration-300 group-hover:bg-emerald-600 group-hover:text-white">
@@ -147,7 +191,13 @@ const Home = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 mt-8 gap-4">
             {tasks.map((task: Task) => {
-              return <TaskCard key={task._id} task={task} />;
+              return (
+                <TaskCard
+                  key={task._id}
+                  task={task}
+                  onEdit={(t) => setEditingTask(t)}
+                />
+              );
             })}
           </div>
         </div>
@@ -156,6 +206,12 @@ const Home = () => {
       <AddTaskModal
         isOpen={isAddTaskOpen}
         onClose={() => setIsAddTaskOpen(false)}
+      />
+
+      <UpdateTaskModal
+        isOpen={!!editingTask}
+        task={editingTask as any}
+        onClose={() => setEditingTask(null)}
       />
     </>
   );

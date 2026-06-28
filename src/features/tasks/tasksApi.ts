@@ -5,6 +5,7 @@ import type {
   CreateTaskResponseDto,
   GetTasksRequestParams,
   GetTasksResponseDto,
+  UpdateTaskRequestDto,
 } from "./tasks.interface";
 
 const tasksApi = createApi({
@@ -50,9 +51,31 @@ const tasksApi = createApi({
       },
       providesTags: ["Tasks"],
     }),
+
+    updateTask: build.mutation<CreateTaskResponseDto, UpdateTaskRequestDto>({
+      query: ({ id, data }) => ({
+        url: `/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
+
+    deleteTask: build.mutation<{ success: boolean; message: string }, string>({
+      query: (id) => ({
+        url: `/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
   }),
 });
 
-export const { useCreateTaskMutation, useGetTasksQuery } = tasksApi;
+export const {
+  useCreateTaskMutation,
+  useGetTasksQuery,
+  useUpdateTaskMutation,
+  useDeleteTaskMutation,
+} = tasksApi;
 
 export default tasksApi;

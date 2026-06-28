@@ -7,13 +7,21 @@ import {
   AlertCircle,
 } from "lucide-react";
 import type { Task } from "../types";
+import {
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} from "../features/tasks/tasksApi";
+import { toast } from "sonner";
 
 interface TaskCardProps {
   task: Task;
+  onEdit?: (task: Task) => void;
 }
 
-const TaskCard = ({ task }: TaskCardProps) => {
+const TaskCard = ({ task, onEdit }: TaskCardProps) => {
   const isDone = task.status === "Done";
+  const [deleteTask] = useDeleteTaskMutation();
+  const [updateTask] = useUpdateTaskMutation();
 
   const priorityStyles = {
     High: "bg-rose-500/10 text-rose-400 border-rose-500/20",
@@ -67,12 +75,29 @@ const TaskCard = ({ task }: TaskCardProps) => {
 
           <div className="flex items-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <button
+              onClick={() => onEdit(task)}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
               title="Edit Task"
             >
               <Edit3 className="h-4 w-4" />
             </button>
             <button
+              onClick={async () => {
+                if (
+                  window.confirm("Are you sure you want to delete this task?")
+                ) {
+                  try {
+                    await deleteTask(task._id).unwrap();
+                    toast.success("Task deleted successfully");
+                  } catch (err: any) {
+                    toast.error(
+                      err?.data?.message ||
+                        err?.message ||
+                        "Failed to delete task",
+                    );
+                  }
+                }
+              }}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 transition-colors cursor-pointer"
               title="Delete Task"
             >
@@ -83,6 +108,22 @@ const TaskCard = ({ task }: TaskCardProps) => {
 
         <div className="mt-4 flex items-start gap-3">
           <button
+            onClick={async () => {
+              try {
+                const newStatus = isDone ? "Todo" : "Done";
+                await updateTask({
+                  id: task._id,
+                  data: { status: newStatus },
+                }).unwrap();
+                toast.success(`Task marked as ${newStatus.toLowerCase()}`);
+              } catch (err: any) {
+                toast.error(
+                  err?.data?.message ||
+                    err?.message ||
+                    "Failed to update status",
+                );
+              }
+            }}
             className="mt-1 shrink-0 text-slate-500 hover:text-blue-500 transition-colors cursor-pointer"
             title={isDone ? "Mark incomplete" : "Mark complete"}
           >

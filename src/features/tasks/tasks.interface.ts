@@ -33,3 +33,8 @@ export interface Task {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface UpdateTaskRequestDto {
+  id: string;
+  data: Partial<CreateTaskRequestDto>;
+}
