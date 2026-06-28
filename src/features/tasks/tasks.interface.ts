@@ -11,6 +11,19 @@ export interface CreateTaskResponseDto {
   data?: Task;
 }
 
+export interface GetTasksResponseDto {
+  success: boolean;
+  message: string;
+  data?: Task[];
+}
+
+export interface GetTasksRequestParams {
+  status?: "Todo" | "In Progress" | "Done";
+  priority?: "High" | "Medium" | "Low";
+  search?: string;
+  sort?: "newest" | "oldest";
+}
+
 export interface Task {
   _id: string;
   title: string;

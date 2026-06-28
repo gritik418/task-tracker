@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar,
   Plus,
@@ -11,54 +11,7 @@ import Navbar from "./components/Navbar";
 import type { Task } from "./types";
 import TaskCard from "./components/TaskCard";
 import AddTaskModal from "./components/AddTaskModal";
-
-const tasks: Task[] = [
-  {
-    _id: "6a40ceef693693f91f7997f7",
-    title: "hey 2",
-    description: "open yt and play music",
-    status: "In Progress",
-    priority: "High",
-    createdAt: "2026-06-28T07:36:15.192Z",
-    updatedAt: "2026-06-28T07:36:15.192Z",
-  },
-  {
-    _id: "6a40cee6693693f91f7997f6",
-    title: "hey 2",
-    description: "open yt and play music",
-    status: "Done",
-    priority: "High",
-    createdAt: "2026-06-28T07:36:06.875Z",
-    updatedAt: "2026-06-28T07:36:06.875Z",
-  },
-  {
-    _id: "6a40ced7693693f91f7997f5",
-    title: "hey 2",
-    description: "open yt and play music",
-    status: "Done",
-    priority: "Medium",
-    createdAt: "2026-06-28T07:35:51.840Z",
-    updatedAt: "2026-06-28T07:35:51.840Z",
-  },
-  {
-    _id: "6a40cc601e70c3609e640401",
-    title: "hey 2",
-    description: "open yt and play music",
-    status: "Todo",
-    priority: "Medium",
-    createdAt: "2026-06-28T07:25:20.538Z",
-    updatedAt: "2026-06-28T07:25:20.538Z",
-  },
-  {
-    _id: "6a40cbee4622619ce42363fe",
-    title: "hey",
-    description: "open yt and play music",
-    status: "Todo",
-    priority: "Medium",
-    createdAt: "2026-06-28T07:23:26.136Z",
-    updatedAt: "2026-06-28T07:23:26.136Z",
-  },
-];
+import { useGetTasksQuery } from "./features/tasks/tasksApi";
 
 const Home = () => {
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
@@ -67,6 +20,16 @@ const Home = () => {
     month: "short",
     day: "numeric",
   });
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const { data, isLoading } = useGetTasksQuery({ search: searchQuery });
+
+  useEffect(() => {
+    if (!isLoading && data?.data) {
+      setTasks(data.data);
+    }
+  }, [isLoading, data]);
 
   return (
     <>
@@ -159,7 +122,7 @@ const Home = () => {
             </div>
           </div>
 
-          <Filters />
+          <Filters searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 mt-8 gap-4">
             {tasks.map((task: Task) => {
