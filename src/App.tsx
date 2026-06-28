@@ -7,6 +7,56 @@ import {
 } from "lucide-react";
 import Filters from "./components/Filters";
 import Navbar from "./components/Navbar";
+import type { Task } from "./types";
+import TaskCard from "./components/TaskCard";
+
+const tasks: Task[] = [
+  {
+    _id: "6a40ceef693693f91f7997f7",
+    title: "hey 2",
+    description: "open yt and play music",
+    status: "In Progress",
+    priority: "High",
+    createdAt: "2026-06-28T07:36:15.192Z",
+    updatedAt: "2026-06-28T07:36:15.192Z",
+  },
+  {
+    _id: "6a40cee6693693f91f7997f6",
+    title: "hey 2",
+    description: "open yt and play music",
+    status: "Done",
+    priority: "High",
+    createdAt: "2026-06-28T07:36:06.875Z",
+    updatedAt: "2026-06-28T07:36:06.875Z",
+  },
+  {
+    _id: "6a40ced7693693f91f7997f5",
+    title: "hey 2",
+    description: "open yt and play music",
+    status: "Done",
+    priority: "Medium",
+    createdAt: "2026-06-28T07:35:51.840Z",
+    updatedAt: "2026-06-28T07:35:51.840Z",
+  },
+  {
+    _id: "6a40cc601e70c3609e640401",
+    title: "hey 2",
+    description: "open yt and play music",
+    status: "Todo",
+    priority: "Medium",
+    createdAt: "2026-06-28T07:25:20.538Z",
+    updatedAt: "2026-06-28T07:25:20.538Z",
+  },
+  {
+    _id: "6a40cbee4622619ce42363fe",
+    title: "hey",
+    description: "open yt and play music",
+    status: "Todo",
+    priority: "Medium",
+    createdAt: "2026-06-28T07:23:26.136Z",
+    updatedAt: "2026-06-28T07:23:26.136Z",
+  },
+];
 
 const Home = () => {
   const currentDate = new Date().toLocaleDateString("en-US", {
@@ -104,6 +154,12 @@ const Home = () => {
           </div>
 
           <Filters />
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 mt-8 gap-4">
+            {tasks.map((task: Task) => {
+              return <TaskCard key={task._id} task={task} />;
+            })}
+          </div>
         </div>
       </main>
     </>
