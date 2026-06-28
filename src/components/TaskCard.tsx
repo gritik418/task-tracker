@@ -16,7 +16,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
   const isDone = task.status === "Done";
 
   const priorityStyles = {
-    High: "bg-rose-500/10 text-rose-450 border-rose-500/20",
+    High: "bg-rose-500/10 text-rose-400 border-rose-500/20",
     Medium: "bg-amber-500/10 text-amber-400 border-amber-500/20",
     Low: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   };

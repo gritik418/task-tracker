@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Calendar,
   Plus,
@@ -9,6 +10,7 @@ import Filters from "./components/Filters";
 import Navbar from "./components/Navbar";
 import type { Task } from "./types";
 import TaskCard from "./components/TaskCard";
+import AddTaskModal from "./components/AddTaskModal";
 
 const tasks: Task[] = [
   {
@@ -59,6 +61,7 @@ const tasks: Task[] = [
 ];
 
 const Home = () => {
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     month: "short",
@@ -93,7 +96,10 @@ const Home = () => {
               </div>
             </div>
 
-            <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all duration-200 hover:from-blue-700 hover:to-indigo-700 hover:shadow-blue-500/30 active:scale-[0.98]">
+            <button
+              onClick={() => setIsAddTaskOpen(true)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all duration-200 hover:from-blue-700 hover:to-indigo-700 hover:shadow-blue-500/30 active:scale-[0.98] cursor-pointer"
+            >
               <Plus className="h-4 w-4" />
               Add Task
             </button>
@@ -162,6 +168,11 @@ const Home = () => {
           </div>
         </div>
       </main>
+
+      <AddTaskModal
+        isOpen={isAddTaskOpen}
+        onClose={() => setIsAddTaskOpen(false)}
+      />
     </>
   );
 };
