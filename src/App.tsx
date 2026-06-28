@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import AddTaskModal from "./components/AddTaskModal";
 import UpdateTaskModal from "./components/UpdateTaskModal";
+import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import Filters from "./components/Filters";
 import Navbar from "./components/Navbar";
 import TaskCard from "./components/TaskCard";
@@ -25,6 +26,7 @@ type TaskStats = {
 const Home = () => {
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [deletingTask, setDeletingTask] = useState<Task | null>(null);
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     month: "short",
@@ -196,6 +198,7 @@ const Home = () => {
                   key={task._id}
                   task={task}
                   onEdit={(t) => setEditingTask(t)}
+                  onDelete={(t) => setDeletingTask(t)}
                 />
               );
             })}
@@ -212,6 +215,12 @@ const Home = () => {
         isOpen={!!editingTask}
         task={editingTask as any}
         onClose={() => setEditingTask(null)}
+      />
+
+      <DeleteConfirmModal
+        isOpen={!!deletingTask}
+        task={deletingTask as any}
+        onClose={() => setDeletingTask(null)}
       />
     </>
   );

@@ -1,26 +1,23 @@
 import {
+  AlertCircle,
   Calendar,
-  Trash2,
-  Edit3,
   CheckCircle2,
   Circle,
-  AlertCircle,
+  Edit3,
+  Trash2,
 } from "lucide-react";
-import type { Task } from "../types";
-import {
-  useDeleteTaskMutation,
-  useUpdateTaskMutation,
-} from "../features/tasks/tasksApi";
 import { toast } from "sonner";
+import { useUpdateTaskMutation } from "../features/tasks/tasksApi";
+import type { Task } from "../types";
 
 interface TaskCardProps {
   task: Task;
   onEdit?: (task: Task) => void;
+  onDelete?: (task: Task) => void;
 }
 
-const TaskCard = ({ task, onEdit }: TaskCardProps) => {
+const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
   const isDone = task.status === "Done";
-  const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
 
   const priorityStyles = {
@@ -82,22 +79,7 @@ const TaskCard = ({ task, onEdit }: TaskCardProps) => {
               <Edit3 className="h-4 w-4" />
             </button>
             <button
-              onClick={async () => {
-                if (
-                  window.confirm("Are you sure you want to delete this task?")
-                ) {
-                  try {
-                    await deleteTask(task._id).unwrap();
-                    toast.success("Task deleted successfully");
-                  } catch (err: any) {
-                    toast.error(
-                      err?.data?.message ||
-                        err?.message ||
-                        "Failed to delete task",
-                    );
-                  }
-                }
-              }}
+              onClick={() => onDelete?.(task)}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 transition-colors cursor-pointer"
               title="Delete Task"
             >
