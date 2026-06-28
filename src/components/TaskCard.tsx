@@ -12,8 +12,8 @@ import type { Task } from "../types";
 
 interface TaskCardProps {
   task: Task;
-  onEdit?: (task: Task) => void;
-  onDelete?: (task: Task) => void;
+  onEdit: (task: Task) => void;
+  onDelete: (task: Task) => void;
 }
 
 const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
@@ -79,7 +79,7 @@ const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
               <Edit3 className="h-4 w-4" />
             </button>
             <button
-              onClick={() => onDelete?.(task)}
+              onClick={() => onDelete(task)}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 transition-colors cursor-pointer"
               title="Delete Task"
             >
